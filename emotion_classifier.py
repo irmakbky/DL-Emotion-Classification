@@ -33,13 +33,16 @@ if __name__ == "__main__":
         keras.layers.Flatten(input_shape=(inputs.shape[1], inputs.shape[2])),
 
         # 1st hidden layer
-        keras.layers.Dense(512, activation="relu"),
+        keras.layers.Dense(512, activation="relu", kernel_regularizer=keras.regularizers.l2(0.001)),
+        keras.layers.BatchNormalization(),
 
         # 2nd hidden layer
-        keras.layers.Dense(256, activation="relu"),
+        keras.layers.Dense(256, activation="relu", kernel_regularizer=keras.regularizers.l2(0.001)),
+        keras.layers.BatchNormalization(),
 
         # 3rd hidden layer
-        keras.layers.Dense(64, activation="relu"),
+        keras.layers.Dense(64, activation="relu", kernel_regularizer=keras.regularizers.l2(0.001)),
+        keras.layers.BatchNormalization(),
 
         # output layer
         keras.layers.Dense(10, activation="softmax")
@@ -47,9 +50,9 @@ if __name__ == "__main__":
     ])
 
     # compile network
-    optimizer = keras.optimizers.Adam(learning_rate=0.0001)
+    optimizer = keras.optimizers.Nadam(learning_rate=0.0001)
     model.compile(optimizer=optimizer,
-                  loss = "sparse_categorical_crossentropy",
+                  loss="sparse_categorical_crossentropy",
                   metrics=["accuracy"])
 
     model.summary()
