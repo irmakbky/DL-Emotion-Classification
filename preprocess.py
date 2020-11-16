@@ -3,8 +3,8 @@ import librosa
 import math
 import json
 
-DATASET_PATH = "Data_reduced"
-JSON_PATH = "data.json"
+DATASET_PATH = "re_smaller"
+JSON_PATH = "re_smaller_json.json"
 
 SAMPLE_RATE = 22050
 NUM_SAMPLES = SAMPLE_RATE * 3   # each file is 3 seconds long
@@ -33,23 +33,20 @@ def create_and_save_mfcc(dataset_path, json_path, n_mfcc, n_fft, hop_length, num
     num_mfcc_per_segment = math.ceil(num_samples_per_segment / hop_length)
 
     # loop through all files
-    for (path, folders, files) in os.walk(dataset_path):
+    for i, (path, folders, files) in enumerate(os.walk(dataset_path)):
 
-        if path != dataset_path and len(folders) == 0:
+        if path != dataset_path:
+
+            path_components = path.split("/")      # ["Reorganized_data", "01"]
+            identifier = path_components[-1]
+            if identifier not in data["mapping"]:
+                data["mapping"].append(identifier)
 
             for f in files:
 
                 # don't read hidden files (os reads them)
                 if f.startswith("."):
                     continue
-
-                fp_componenets = f.split("/")  # ["Data", "Actor_01", "03-01-01-01-01-01-01.wav"]
-
-                filename_ids = fp_componenets[-1].split("-")  # ["03", "01", "01", "01", "01", "01", "01.wav"]
-                emotion = filename_ids[2]
-                if emotion not in data["mapping"]:
-                    data["mapping"].append(emotion)
-                index = data["mapping"].index(emotion)
 
                 # load the audio file
                 file_path = os.path.join(path, f)
@@ -72,7 +69,7 @@ def create_and_save_mfcc(dataset_path, json_path, n_mfcc, n_fft, hop_length, num
                     # store mfcc segment
                     if len(mfcc) == num_mfcc_per_segment:
                         data["mfcc"].append(mfcc.tolist())
-                        data["labels"].append(index)  # emotion = "01" -> index 0
+                        data["labels"].append(i-1)  # 1 -> 0
 
     with open(json_path, "w") as fp:
         json.dump(data, fp, indent=4)
