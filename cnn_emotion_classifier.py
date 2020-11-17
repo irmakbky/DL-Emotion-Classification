@@ -90,7 +90,7 @@ if __name__ == "__main__":
     # train CNN
     model.fit(X_train, y_train, validation_data=(X_validation, y_validation),
               batch_size=32,
-              epochs=30)
+              epochs=100)
 
     # evaluate CNN on test set
     test_error, test_accuracy = model.evaluate(X_test, y_test, verbose=1)
