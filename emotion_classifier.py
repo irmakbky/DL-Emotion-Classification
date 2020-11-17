@@ -5,7 +5,7 @@ import tensorflow.keras as keras
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 
-DATASET_PATH = "re_smaller_json.json"
+DATASET_PATH = ""
 
 def load_data(dataset_path):
 
